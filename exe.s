@@ -126,13 +126,13 @@ __main
 
 		ldr r3, = GPIO_PORTF_BASE+GPIO_O_DIR    
 
-; une broche (Pin) du PINF en sortie (broches 4 et 5 : 00110000)
+; une broche (Pin) du PORT F en sortie (broches 4 et 5 : 00110000)
 
 		ldr r4, = PIN45	
 
 		str r4, [r3]
 
-; Configuration du PIN F - Enable Digital Function - PIN F 					
+; Configuration du PORT F - Enable Digital Function - PORT F 					
 
 		ldr r3, = GPIO_PORTF_BASE+GPIO_O_DEN	
 
@@ -150,7 +150,7 @@ __main
 		
 ; Configuration Switchs
 		
-; Configuration du PIN D - Enable Digital Function - PIN D			
+; Configuration du PORT D - Enable Digital Function - PORT D			
 
 		ldr r3, = GPIO_PORTD_BASE+GPIO_O_DEN
 
@@ -158,7 +158,7 @@ __main
 
        	str r4, [r3]			
 
-; Activer le registre des switchs, PIN D			
+; Activer le registre des switchs, PORT D			
 
 		ldr r3, = GPIO_PORTD_BASE+GPIO_PUR	
 
@@ -168,7 +168,7 @@ __main
 			
 ; Configuration Bumpers
 
-; Configuration du PIN E - Enable Digital Function - PIN E	
+; Configuration du PORT E - Enable Digital Function - PORT E	
 
 		ldr r3, = GPIO_PORTE_BASE+GPIO_O_DEN	
 
@@ -177,7 +177,7 @@ __main
        	str r4, [r3]			
 
 
-; Activer le registre des bumpers, PIN E		
+; Activer le registre des bumpers, PORT E		
 
 		ldr r3, = GPIO_PORTE_BASE+GPIO_PUR	
 
