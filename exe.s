@@ -4,52 +4,42 @@
 
 		AREA    |.text|, CODE, READONLY
 			
-; This register controls the clock gating logic in normal Run ;mode SYSCTL_RCGC2_R (p291 datasheet de lm3s9b92.pdf
+; Ce registre contrôle la logique de gestion de l'horloge en mode d'exécution normal SYSCTL_RCGC2_R (page 291 du document lm3s9B92.pdf)
 
 SYSCTL_PERIPH_GPIO EQU		0x400FE108
 
 ; Adresse de base du PIN F
-GPIO_PINF_BASE		EQU		0x40025000
+GPIO_PORTF_BASE		EQU		0x40025000
 
 ; Adresse de base du PIN D
-GPIO_PIND_BASE		EQU		0x40007000
+GPIO_PORTD_BASE		EQU		0x40007000
 
 ; Adresse de base du PIN E
-GPIO_PINE_BASE		EQU		0x40024000
+GPIO_PORTE_BASE		EQU		0x40024000
 	
-; configure the corresponding pin to be an output
+; Direction des GPIO (page 417 du document lm3s9B92.pdf)
 
-; all GPIO pins are inputs by default
+GPIO_O_DIR      EQU 0x400
 
-; GPIO Direction (p417 datasheet de lm3s9B92.pdf
+; Le registre GPIODR2R contrôle la commande de conduite de 2 mA
 
-GPIO_O_DIR   		EQU 	0x400
+; Par défaut, toutes les broches GPIO ont une commande de 2 mA.
 
+; Sélection de la commande 2 mA pour les GPIO - page 428 du document lm3s9B92.pdf
 
+GPIO_O_DR2R     EQU 0x500
 
-; The GPIODR2R register is the 2-mA drive control register
+; Registre d'activation numérique
 
-; By default, all GPIO pins have 2-mA drive.
+; Pour utiliser la broche en tant qu'entrée ou sortie numérique, le bit GPIODEN correspondant doit être activé.
 
-; GPIO 2-mA Drive Select - p428 datasheet de lm3s9B92.pdf
+; Activation numérique des GPIO - page 437 du document lm3s9B92.pdf
 
-GPIO_O_DR2R   		EQU 	0x500  
+GPIO_O_DEN      EQU 0x51C
 
+; Registre pour activer les switchs et les bumpers en logiciel - par défaut, ils sont reliés à la masse donc inactifs
 
-
-; Digital enable register
-
-; To use the pin as a digital input or output, the ;corresponding GPIODEN bit must be set.
-
-; GPIO Digital Enable - p437 datasheet de lm3s9B92.pdf
-
-GPIO_O_DEN   		EQU 	0x51C  
-
-
-
-; Registre pour activer les switchs et les bumpers en logiciel - par d�faut ;ils sont reli�s � la masse donc inactifs
-
-GPIO_PUR			EQU		0x510
+GPIO_PUR        EQU 0x510
 
 ; PIN D : selection du SW1 et 2 ,BROCHE 6 et 7 du PORT D
 
@@ -84,7 +74,7 @@ DUREE_AVANCE   		EQU     0x008FFFFF
 		ENTRY
 		EXPIN	__main
 		
-		;; The IMPIN command specifies that a symbol is defined in a shared object at runtime.
+		;; La commande IMPIN spécifie qu'un symbole est défini dans un objet partagé lors de l'exécution.
 		IMPIN	MOTEUR_INIT					; initialise les moteurs (configure les pwms + GPIO)
 		
 		IMPIN	MOTEUR_DROIT_ON				; activer le moteur droit
@@ -102,8 +92,8 @@ DUREE_AVANCE   		EQU     0x008FFFFF
 
 __main
 
-; clock sur GPIO F o� sont branch�s les leds, GPIO E sur lequel sont branch�s les bumpers et GPIO D sur lequel sont branch�s les SW : 0x38 == 000111000)
-; Enable the PIN F, E and D,  peripheral clock by setting the ;corresponding bits,(p291 datasheet de lm3s9B96.pdf), ;GPIO::HGFEDCBA)	
+; Les Ports de l'horloge sur GPIO F sont connectées aux LED, GPIO E est connecté aux bumpers et GPIO D est connecté aux interrupteurs : 0x38 == 000111000)
+; Activer l'horloge des périphériques pour les Ports F, E et D en définissant les bits correspondants, (page 291 du document LM3S9B96.pdf), (GPIO::HGFEDCBA)
 
 		ldr r2, = SYSCTL_PERIPH_GPIO  		
 
@@ -111,8 +101,8 @@ __main
 
 	    str r4, [r2]
 		  
-; "There must be a delay of 3 system clocks before any GPIO reg. access  (p413 datasheet de lm3s9B92.pdf)
-; tres tres imPINant....;; pas necessaire en simu ou en debbug ;step by step...
+; "Il doit y avoir un délai de 3 cycles d'horloge système avant tout accès au registre GPIO (page 413 du document LM3S9B92.pdf)
+; tres tres imPINant....;; pas necessaire en simu ou en debbug ;étape par étape...
 
 		nop	   									
 		nop	   
@@ -134,7 +124,7 @@ __main
 
 ; CONFIGURATION LEDS
 
-		ldr r3, = GPIO_PINF_BASE+GPIO_O_DIR    
+		ldr r3, = GPIO_PORTF_BASE+GPIO_O_DIR    
 
 ; une broche (Pin) du PINF en sortie (broches 4 et 5 : 00110000)
 
@@ -144,7 +134,7 @@ __main
 
 ; Configuration du PIN F - Enable Digital Function - PIN F 					
 
-		ldr r3, = GPIO_PINF_BASE+GPIO_O_DEN	
+		ldr r3, = GPIO_PORTF_BASE+GPIO_O_DEN	
 
 		ldr r4, = PIN45		
 
@@ -152,7 +142,7 @@ __main
 
 ; Choix de l'intensit� de sortie (2mA)			
 
-		ldr r3, = GPIO_PINF_BASE+GPIO_O_DR2R	
+		ldr r3, = GPIO_PORTF_BASE+GPIO_O_DR2R	
 
         ldr r4, = PIN45			
 
@@ -162,7 +152,7 @@ __main
 		
 ; Configuration du PIN D - Enable Digital Function - PIN D			
 
-		ldr r3, = GPIO_PIND_BASE+GPIO_O_DEN
+		ldr r3, = GPIO_PORTD_BASE+GPIO_O_DEN
 
         ldr r4, = PIN67	
 
@@ -170,7 +160,7 @@ __main
 
 ; Activer le registre des switchs, PIN D			
 
-		ldr r3, = GPIO_PIND_BASE+GPIO_PUR	
+		ldr r3, = GPIO_PORTD_BASE+GPIO_PUR	
 
        	ldr r4, = PIN67
 
@@ -180,7 +170,7 @@ __main
 
 ; Configuration du PIN E - Enable Digital Function - PIN E	
 
-		ldr r3, = GPIO_PINE_BASE+GPIO_O_DEN	
+		ldr r3, = GPIO_PORTE_BASE+GPIO_O_DEN	
 
        	ldr r4, = PIN01	
 
@@ -189,7 +179,7 @@ __main
 
 ; Activer le registre des bumpers, PIN E		
 
-		ldr r3, = GPIO_PINE_BASE+GPIO_PUR	
+		ldr r3, = GPIO_PORTE_BASE+GPIO_PUR	
 
        	ldr r4, = PIN01
 
@@ -197,13 +187,13 @@ __main
 			
 			
 inst1
-; Lecture de l'�tat du SW1 et ranger cet �tat dans r5
+; Lecture de l'état du SW1 et rangement cet état dans r5
 
-			ldr r8,= GPIO_PIND_BASE + (PIN6<<2)
+			ldr r8,= GPIO_PORTD_BASE + (PIN6<<2)
 
 			ldr r11, [r8]
 
-; Si pression sur SW1, alors Evalbot se met � avancer, sinon il ne se passe rien
+; Si il y a une pression sur le SW1, alors Evalbot se met à avancer, sinon il ne se passe rien.
 
 			cmp	r11,#0x40
 
@@ -235,9 +225,9 @@ loop
 		BL	MOTEUR_DROIT_AVANT 
 		BL	MOTEUR_GAUCHE_AVANT
 
-; Lecture de l'�tat du BW1 et ranger cet �tat dans r5
+; Lecture de l'�tat du BW1 et rangement cet �tat dans r5
 
-			ldr r7,= GPIO_PINE_BASE + (PIN0<<2)
+			ldr r7,= GPIO_PORTE_BASE + (PIN0<<2)
 
 			ldr r5, [r7]
 			
@@ -247,9 +237,9 @@ loop
 
 			bne	rota_gauche
        					
-; Lecture de l'�tat du BW2 et ranger cet �tat dans r5
+; Lecture de l'�tat du BW2 et rangement cet �tat dans r5
 
-			ldr r7,=GPIO_PINE_BASE + (PIN1<<2)
+			ldr r7,=GPIO_PORTE_BASE + (PIN1<<2)
 
 			ldr r5,[r7]
 
@@ -259,9 +249,9 @@ loop
 
 			bne rota_droite
 			
-; Lecture de l'�tat du SW2 et ranger cet �tat dans r11 (et non r5 car les 2 composants doivent pouvoir �tre pr�ss�s en m�me temps)
+; Lecture de l'�tat du SW2 et rangement cet �tat dans r11 (et non r5 car les 2 composants doivent pouvoir �tre pr�ss�s en m�me temps)
 			
-			ldr r8,= GPIO_PIND_BASE + (PIN7<<2)
+			ldr r8,= GPIO_PORTD_BASE + (PIN7<<2)
 
 			ldr r11, [r8]
 			
@@ -289,7 +279,7 @@ rota_droite
 
 		mov r10, #0x000       						;; pour eteindre LED
 		ldr r12, = PIN4       					;; Allume PINF broche 4 : 00010000
-		ldr r3, = GPIO_PINF_BASE + (PIN4<<2)    	;; @data Register = @base + (mask<<2) ==> LED
+		ldr r3, = GPIO_PORTF_BASE + (PIN4<<2)    	;; @data Register = @base + (mask<<2) ==> LED
 		mov r6, #0									;; initialise un compteur de clignotement
 
 
@@ -325,9 +315,9 @@ wait1_d		subs r9, #1
 wait2_d   	subs r9, #1
         	bne wait2_d
 			
-; Lecture de l'�tat du SW2 et ranger cet �tat dans r11 
+; Lecture de l'�tat du SW2 et rangement cet �tat dans r11 
 
-			ldr r8,= GPIO_PIND_BASE + (PIN7<<2)
+			ldr r8,= GPIO_PORTD_BASE + (PIN7<<2)
 
 			ldr r11, [r8]
 
@@ -354,7 +344,7 @@ rota_gauche
 
 		mov r10, #0x000       						;; pour eteindre LED
 		ldr r12, = PIN5       						;; Allume PINF broche 5 : 00010000
-		ldr r3, = GPIO_PINF_BASE + (PIN5<<2)    	;; @data Register = @base + (mask<<2) ==> LED
+		ldr r3, = GPIO_PORTF_BASE + (PIN5<<2)    	;; @data Register = @base + (mask<<2) ==> LED
 		mov r6, #0									;; initialise un compteur de clignotement
 
 
@@ -389,9 +379,9 @@ wait1_g		subs r9, #1
 wait2_g   	subs r9, #1
         	bne wait2_g
 			
-; Lecture de l'�tat du SW2 et ranger cet �tat dans r11 
+; Lecture de l'�tat du SW2 et rangement cet �tat dans r11 
 
-			ldr r8,= GPIO_PIND_BASE + (PIN7<<2)
+			ldr r8,= GPIO_PORTD_BASE + (PIN7<<2)
 
 			ldr r11, [r8]
 
