@@ -4,7 +4,7 @@
 
 		AREA    |.text|, CODE, READONLY
 			
-; Ce registre contrÃ´le la logique de gestion de l'horloge en mode d'exÃ©cution normal SYSCTL_RCGC2_R (page 291 du document lm3s9B92.pdf)
+; Ce registre contrôle la logique de gestion de l'horloge en mode d'exécution normal SYSCTL_RCGC2_R (page 291 du document lm3s9B92.pdf)
 
 SYSCTL_PERIPH_GPIO EQU		0x400FE108
 
@@ -21,25 +21,25 @@ GPIO_PORTE_BASE		EQU		0x40024000
 
 GPIO_O_DIR      EQU 0x400
 
-; Le registre GPIODR2R contrÃ´le la commande de conduite de 2 mA
+; Le registre GPIODR2R contrôle la commande de conduite de 2 mA
 
-; Par dÃ©faut, toutes les broches GPIO ont une commande de 2 mA.
+; Par défaut, toutes les broches GPIO ont une commande de 2 mA.
 
-; SÃ©lection de la commande 2 mA pour les GPIO - page 428 du document lm3s9B92.pdf
+; Sélection de la commande 2 mA pour les GPIO - page 428 du document lm3s9B92.pdf
 
 GPIO_O_DR2R     EQU 0x500
 
-; Registre d'activation numÃ©rique
+; Registre d'activation numérique
 
-; Pour utiliser la broche en tant qu'entrÃ©e ou sortie numÃ©rique, le bit GPIODEN correspondant doit Ãªtre activÃ©.
+; Pour utiliser la broche en tant qu'entrée ou sortie numérique, le bit GPIODEN correspondant doit être activé.
 
-; Activation numÃ©rique des GPIO - page 437 du document lm3s9B92.pdf
+; Activation numérique des GPIO - page 437 du document lm3s9B92.pdf
 
-GPIO_O_DEN      EQU 0x51C
+GPIO_O_DEN      EQU     0x51C
 
-; Registre pour activer les switchs et les bumpers en logiciel - par dÃ©faut, ils sont reliÃ©s Ã  la masse donc inactifs
+; Registre pour activer les switchs et les bumpers en logiciel - par défaut, ils sont reliés à la masse donc inactifs
 
-GPIO_PUR        EQU 0x510
+GPIO_PUR            EQU     0x510
 
 ; PIN D : selection du SW1 et 2 ,BROCHE 6 et 7 du PORT D
 
@@ -65,35 +65,35 @@ PIN1				EQU		0x02
 
 PIN01				EQU 	0x03
 	
-; dï¿½finit la frï¿½quence de clignotement
+; d finit la fr quence de clignotement
 DUREE_CLIGNOTEMENT  EQU     0x0015FFFF
 	
-; dï¿½finit la durï¿½e pendant laquelle le robot doit avancer aprï¿½s une rotation
+; d finit la dur e pendant laquelle le robot doit avancer apr s une rotation
 DUREE_AVANCE   		EQU     0x008FFFFF	
 	
 		ENTRY
-		EXPIN	__main
+		EXPORT	__main
 		
-		;; La commande IMPIN spÃ©cifie qu'un symbole est dÃ©fini dans un objet partagÃ© lors de l'exÃ©cution.
-		IMPIN	MOTEUR_INIT					; initialise les moteurs (configure les pwms + GPIO)
+		;; The IMPORT command specifies that a symbol is defined in a shared object at runtime.
+		IMPORT	MOTEUR_INIT					; initialise les moteurs (configure les pwms + GPIO)
 		
-		IMPIN	MOTEUR_DROIT_ON				; activer le moteur droit
-		IMPIN  MOTEUR_DROIT_OFF			; dï¿½activer le moteur droit
-		IMPIN  MOTEUR_DROIT_AVANT			; moteur droit tourne vers l'avant
-		IMPIN  MOTEUR_DROIT_ARRIERE		; moteur droit tourne vers l'arriï¿½re
-		IMPIN  MOTEUR_DROIT_INVERSE		; inverse le sens de rotation du moteur droit
+		IMPORT	MOTEUR_DROIT_ON				; activer le moteur droit
+		IMPORT  MOTEUR_DROIT_OFF			; d activer le moteur droit
+		IMPORT  MOTEUR_DROIT_AVANT			; moteur droit tourne vers l'avant
+		IMPORT  MOTEUR_DROIT_ARRIERE		; moteur droit tourne vers l'arri re
+		IMPORT  MOTEUR_DROIT_INVERSE		; inverse le sens de rotation du moteur droit
 		
-		IMPIN	MOTEUR_GAUCHE_ON			; activer le moteur gauche
-		IMPIN  MOTEUR_GAUCHE_OFF			; dï¿½activer le moteur gauche
-		IMPIN  MOTEUR_GAUCHE_AVANT			; moteur gauche tourne vers l'avant
-		IMPIN  MOTEUR_GAUCHE_ARRIERE		; moteur gauche tourne vers l'arriï¿½re
-		IMPIN  MOTEUR_GAUCHE_INVERSE		; inverse le sens de rotation du moteur gauche
+		IMPORT	MOTEUR_GAUCHE_ON			; activer le moteur gauche
+		IMPORT  MOTEUR_GAUCHE_OFF			; d activer le moteur gauche
+		IMPORT  MOTEUR_GAUCHE_AVANT			; moteur gauche tourne vers l'avant
+		IMPORT  MOTEUR_GAUCHE_ARRIERE		; moteur gauche tourne vers l'arri re
+		IMPORT  MOTEUR_GAUCHE_INVERSE		; inverse le sens de rotation du moteur gauche
 
 
 __main
 
-; Les Ports de l'horloge sur GPIO F sont connectÃ©es aux LED, GPIO E est connectÃ© aux bumpers et GPIO D est connectÃ© aux interrupteurs : 0x38 == 000111000)
-; Activer l'horloge des pÃ©riphÃ©riques pour les Ports F, E et D en dÃ©finissant les bits correspondants, (page 291 du document LM3S9B96.pdf), (GPIO::HGFEDCBA)
+; Les Ports de l'horloge sur GPIO F sont connectées aux LED, GPIO E est connecté aux bumpers et GPIO D est connecté aux interrupteurs : 0x38 == 000111000)
+; Activer l'horloge des périphériques pour les Ports F, E et D en définissant les bits correspondants, (page 291 du document LM3S9B96.pdf), (GPIO::HGFEDCBA)
 
 		ldr r2, = SYSCTL_PERIPH_GPIO  		
 
@@ -101,8 +101,8 @@ __main
 
 	    str r4, [r2]
 		  
-; "Il doit y avoir un dÃ©lai de 3 cycles d'horloge systÃ¨me avant tout accÃ¨s au registre GPIO (page 413 du document LM3S9B92.pdf)
-; tres tres imPINant....;; pas necessaire en simu ou en debbug ;Ã©tape par Ã©tape...
+; "Il doit y avoir un délai de 3 cycles d'horloge système avant tout accès au registre GPIO (page 413 du document LM3S9B92.pdf)
+; tres tres imPINant....;; pas necessaire en simu ou en debbug ;étape par étape...
 
 		nop	   									
 		nop	   
@@ -126,13 +126,13 @@ __main
 
 		ldr r3, = GPIO_PORTF_BASE+GPIO_O_DIR    
 
-; une broche (Pin) du PORT F en sortie (broches 4 et 5 : 00110000)
+; une broche (Pin) du PINF en sortie (broches 4 et 5 : 00110000)
 
 		ldr r4, = PIN45	
 
 		str r4, [r3]
 
-; Configuration du PORT F - Enable Digital Function - PORT F 					
+; Configuration du PIN F - Enable Digital Function - PIN F 					
 
 		ldr r3, = GPIO_PORTF_BASE+GPIO_O_DEN	
 
@@ -140,7 +140,7 @@ __main
 
 		str r4, [r3]
 
-; Choix de l'intensitï¿½ de sortie (2mA)			
+; Choix de l'intensit  de sortie (2mA)			
 
 		ldr r3, = GPIO_PORTF_BASE+GPIO_O_DR2R	
 
@@ -150,7 +150,7 @@ __main
 		
 ; Configuration Switchs
 		
-; Configuration du PORT D - Enable Digital Function - PORT D			
+; Configuration du PIN D - Enable Digital Function - PIN D			
 
 		ldr r3, = GPIO_PORTD_BASE+GPIO_O_DEN
 
@@ -158,7 +158,7 @@ __main
 
        	str r4, [r3]			
 
-; Activer le registre des switchs, PORT D			
+; Activer le registre des switchs, PIN D			
 
 		ldr r3, = GPIO_PORTD_BASE+GPIO_PUR	
 
@@ -168,7 +168,7 @@ __main
 			
 ; Configuration Bumpers
 
-; Configuration du PORT E - Enable Digital Function - PORT E	
+; Configuration du PIN E - Enable Digital Function - PIN E	
 
 		ldr r3, = GPIO_PORTE_BASE+GPIO_O_DEN	
 
@@ -177,7 +177,7 @@ __main
        	str r4, [r3]			
 
 
-; Activer le registre des bumpers, PORT E		
+; Activer le registre des bumpers, PIN E		
 
 		ldr r3, = GPIO_PORTE_BASE+GPIO_PUR	
 
@@ -187,13 +187,13 @@ __main
 			
 			
 inst1
-; Lecture de l'Ã©tat du SW1 et rangement cet Ã©tat dans r5
+; Lecture de l'état du SW1 et rangement cet état dans r5
 
 			ldr r8,= GPIO_PORTD_BASE + (PIN6<<2)
 
 			ldr r11, [r8]
 
-; Si il y a une pression sur le SW1, alors Evalbot se met Ã  avancer, sinon il ne se passe rien.
+; Si il y a une pression sur le SW1, alors Evalbot se met à avancer, sinon il ne se passe rien.
 
 			cmp	r11,#0x40
 
@@ -225,52 +225,52 @@ loop
 		BL	MOTEUR_DROIT_AVANT 
 		BL	MOTEUR_GAUCHE_AVANT
 
-; Lecture de l'ï¿½tat du BW1 et rangement cet ï¿½tat dans r5
+; Lecture de l' tat du BW1 et rangement cet  tat dans r5
 
 			ldr r7,= GPIO_PORTE_BASE + (PIN0<<2)
 
 			ldr r5, [r7]
 			
-; Si pression sur BW1 alors Evalbot tourne sur lui mï¿½me dans le sens triginomï¿½trique
+; Si pression sur BW1 alors Evalbot tourne sur lui m me dans le sens triginom trique
 
 			cmp	r5,#0x01
 
 			bne	rota_gauche
        					
-; Lecture de l'ï¿½tat du BW2 et rangement cet ï¿½tat dans r5
+; Lecture de l' tat du BW2 et rangement cet  tat dans r5
 
 			ldr r7,=GPIO_PORTE_BASE + (PIN1<<2)
 
 			ldr r5,[r7]
 
-; Si pression sur BW2 alors Evalbot tourne sur lui mï¿½me dans le sens horaire
+; Si pression sur BW2 alors Evalbot tourne sur lui m me dans le sens horaire
 
 			cmp r5,#0x02
 
 			bne rota_droite
 			
-; Lecture de l'ï¿½tat du SW2 et rangement cet ï¿½tat dans r11 (et non r5 car les 2 composants doivent pouvoir ï¿½tre prï¿½ssï¿½s en mï¿½me temps)
+; Lecture de l' tat du SW2 et rangement cet  tat dans r11 (et non r5 car les 2 composants doivent pouvoir  tre pr ss s en m me temps)
 			
 			ldr r8,= GPIO_PORTD_BASE + (PIN7<<2)
 
 			ldr r11, [r8]
 			
-; Si pression sur SW2 alors Evalbot s'arrï¿½te
+; Si pression sur SW2 alors Evalbot s'arr te
 
 			cmp	r11,#0x80
 
 			bne	stopmoteur
 
-;Si rien d'appuyï¿½, on reste dans la boucle, Evalbot continue d'avancer
+;Si rien d'appuy , on reste dans la boucle, Evalbot continue d'avancer
 
 			b	loop
 
 rota_droite
 		
-		; dï¿½finit une rotation ï¿½ droite
+		; d finit une rotation   droite
 		mov r4, #1
 		
-		; incrï¿½mente le compteur de rotations
+		; incr mente le compteur de rotations
 		add r2, #1
 
 		BL	MOTEUR_DROIT_ARRIERE
@@ -289,11 +289,11 @@ clin_d
         	str r10, [r3]    					;; Eteint LED car r2 = 0x00      
         	ldr r9, = DUREE_CLIGNOTEMENT 		;; pour la duree de la boucle d'attente1 (wait1_d)
 			add r6, #1							;; incrementation du compteur de clignotement
-			cmp r6, #4							;; au bout de 3 clignotements il retourne dans l'ï¿½tat oï¿½ il avance
+			cmp r6, #4							;; au bout de 3 clignotements il retourne dans l' tat o  il avance
 			beq avance_d
 			b wait1_d
 			
-avance_d										;; retourne dans loop si le compteur de rotation est pair, c'est ï¿½ dire si la sï¿½quence avance puis rotation contraire vient de se produire
+avance_d										;; retourne dans loop si le compteur de rotation est pair, c'est   dire si la s quence avance puis rotation contraire vient de se produire
 			cmp r2, #2							
 			beq loop
 			cmp r2, #4
@@ -303,7 +303,7 @@ avance_d										;; retourne dans loop si le compteur de rotation est pair, c'e
 			cmp r2, #8
 			beq loop
 			
-			b AVANCE_X_SECONDES					;; autrement effectue la sï¿½quence avance puis rotation contraire
+			b AVANCE_X_SECONDES					;; autrement effectue la s quence avance puis rotation contraire
 
 
 wait1_d		subs r9, #1
@@ -315,13 +315,13 @@ wait1_d		subs r9, #1
 wait2_d   	subs r9, #1
         	bne wait2_d
 			
-; Lecture de l'ï¿½tat du SW2 et rangement cet ï¿½tat dans r11 
+; Lecture de l' tat du SW2 et rangement cet  tat dans r11 
 
 			ldr r8,= GPIO_PORTD_BASE + (PIN7<<2)
 
 			ldr r11, [r8]
 
-; Si pression sur SW2 alors Evalbot s'arrï¿½te
+; Si pression sur SW2 alors Evalbot s'arr te
 
 			cmp	r11,#0x80
 
@@ -331,16 +331,16 @@ wait2_d   	subs r9, #1
 		
 rota_gauche
 		
-		; dï¿½finit une rotation ï¿½ gauche
+		; d finit une rotation   gauche
 		mov r4, #2
 		
-		; incrï¿½mente le compteur de rotations
+		; incr mente le compteur de rotations
 		add r2, #1
 
 		BL	MOTEUR_GAUCHE_ARRIERE
 
 
-; Allumer la led broche 5 (PIN5)
+; Allumer la led broche 5 (PORT5)
 
 		mov r10, #0x000       						;; pour eteindre LED
 		ldr r12, = PIN5       						;; Allume PINF broche 5 : 00010000
@@ -354,11 +354,11 @@ clin_g
         	str r10, [r3]    					;; Eteint LED car r2 = 0x00      
         	ldr r9, = DUREE_CLIGNOTEMENT 		;; pour la duree de la boucle d'attente1 (wait1_g)
 			add r6, #1							;; incrementation du compteur de clignotement
-			cmp r6, #4							;; au bout de 3 clignotements il retourne dans l'ï¿½tat oï¿½ il avance
+			cmp r6, #4							;; au bout de 3 clignotements il retourne dans l' tat o  il avance
 			beq avance_g
 			b wait1_g
 
-avance_g										;; retourne dans loop si le compteur de rotation est pair, c'est ï¿½ dire si la sï¿½quence avance puis rotation contraire vient de se produire
+avance_g										;; retourne dans loop si le compteur de rotation est pair, c'est   dire si la s quence avance puis rotation contraire vient de se produire
 			cmp r2, #2
 			beq loop
 			cmp r2, #4
@@ -368,7 +368,7 @@ avance_g										;; retourne dans loop si le compteur de rotation est pair, c'e
 			cmp r2, #8
 			beq loop
 			
-			b AVANCE_X_SECONDES					;; autrement effectue la sï¿½quence avance puis rotation contraire
+			b AVANCE_X_SECONDES					;; autrement effectue la s quence avance puis rotation contraire
 
 wait1_g		subs r9, #1
         	bne wait1_g
@@ -379,13 +379,13 @@ wait1_g		subs r9, #1
 wait2_g   	subs r9, #1
         	bne wait2_g
 			
-; Lecture de l'ï¿½tat du SW2 et rangement cet ï¿½tat dans r11 
+; Lecture de l'tat du SW2 et rangement cet  tat dans r11 
 
 			ldr r8,= GPIO_PORTD_BASE + (PIN7<<2)
 
 			ldr r11, [r8]
 
-; Si pression sur SW2 alors Evalbot s'arrï¿½te
+; Si pression sur SW2 alors Evalbot s'arr te
 
 			cmp	r11,#0x80
 
@@ -397,11 +397,11 @@ AVANCE_X_SECONDES
 
 	ldr r9, = DUREE_AVANCE
 	
-	; fait avancer le robot pendant un temps donnï¿½
+	; fait avancer le robot pendant un temps donn 
 	BL	MOTEUR_DROIT_AVANT 
 	BL	MOTEUR_GAUCHE_AVANT
 	
-	cmp r2, #9						;; si le robot a rencontrï¿½ 5 fois de suite un obstacle, alors on considï¿½re que cet obstacle est un mur et le robot reprend sa route
+	cmp r2, #9						;; si le robot a rencontr  5 fois de suite un obstacle, alors on consid re que cet obstacle est un mur et le robot reprend sa route
 	beq reset_compteur_rota
 
 wait	subs r9, #1
@@ -416,10 +416,10 @@ stopmoteur
 		BL	MOTEUR_DROIT_OFF
 		BL	MOTEUR_GAUCHE_OFF
 
-; ï¿½teindre les leds
+;  teindre les leds
 		str r10, [r3]
 		
-; Retour dans l'ï¿½tat d'attente d'appui sur SW1
+; Retour dans l' tat d'attente d'appui sur SW1
 		b inst1
 		
 
