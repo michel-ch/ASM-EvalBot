@@ -8,13 +8,13 @@
 
 SYSCTL_PERIPH_GPIO EQU		0x400FE108
 
-; Adresse de base du PIN F
+; Adresse de base du PORT F
 GPIO_PORTF_BASE		EQU		0x40025000
 
-; Adresse de base du PIN D
+; Adresse de base du PORT D
 GPIO_PORTD_BASE		EQU		0x40007000
 
-; Adresse de base du PIN E
+; Adresse de base du PORT E
 GPIO_PORTE_BASE		EQU		0x40024000
 	
 ; Direction des GPIO (page 417 du document lm3s9B92.pdf)
